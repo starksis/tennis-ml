@@ -61,6 +61,36 @@ snapshot = {
     'total_matches': len(df),
     'top200_elo': {p: round(e,1) for p,e in top200}
 }
+import requests
+import io
+
+def load_2025_odds():
+    sources = [
+        "http://www.tennis-data.co.uk/2025/2025.xlsx",
+        "http://www.tennis-data.co.uk/2025w/2025.xlsx"
+    ]
+    frames = []
+    for url in sources:
+        try:
+            r = pd.read_excel(url)
+            frames.append(r)
+            print(f"OK: {url} — {len(r)} матчей")
+        except Exception as e:
+            print(f"Skip: {url}")
+    return pd.concat(frames) if frames else pd.DataFrame()
+
+fresh = load_2025_odds()
+print(f"Свежих матчей 2025: {len(fresh)}")
+```
+
+---
+
+## Реальная картина по датам
+```
+tennis_atp/wta GitHub    до конца 2024  ✅
+tennis-data.co.uk        2025 частично  ⚠️
+ultimatetennisstatistics  2025 полностью ✅ (платно)
+sofascore/flashscore      реальное время ✅ (scraping)
 
 with open('elo_snapshot.json', 'w') as f:
     json.dump(snapshot, f, indent=2)
